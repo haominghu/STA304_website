@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.75.1" />
+
+
+<title>COVID study - Haoming Hu&#39;s website</title>
+<meta property="og:title" content="COVID study - Haoming Hu&#39;s website">
+
+
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/logo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://github.com/rstudio/blogdown">GitHub</a></li>
+    
+    <li><a href="https://twitter.com/rstudio">Twitter</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">4 min read</span>
+    
+
+    <h1 class="article-title">COVID study</h1>
+
+    
+    <span class="article-date">2020-09-22</span>
+    
+
+    <div class="article-content">
+      
+
+
+<div id="abstract" class="section level1">
+<h1>Abstract</h1>
+<p>This report collects information about COVID-19 cases in Toronto and analyzes some groups that are likely to be infected, after which would could raise awareness of them. And we found out that certain age group and gender are indeed more susceptible.</p>
+</div>
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>We use <span class="citation">Wickham et al. (2019)</span>.
+We use <span class="citation">(“COVID19 Cases in Toronto” 2020)</span>.</p>
+<p>2020 is a hard year for everybody due to the widespread of the novel virus. In order to raise awareness of the general public, it is a good way to expose them with the propriate data, which indicates some virus-related factors. Specifically, we want to know if variables like gender, age group and so on would affect the possibility of contracting the virus. And actually, they do.</p>
+</div>
+<div id="data-discussion" class="section level1">
+<h1>Data discussion</h1>
+<p>The data set we used is called “COVID-19 Cases in Toronto”, and it is from the Toronto Open Data Portal. Considering the comprehensive imformation it contains about COVID-19 cases in Toronto, we decided to use it in our later analysis.</p>
+</div>
+<div id="data-of-covid-19-cases-in-canada" class="section level1">
+<h1>Data of covid-19 cases in Canada</h1>
+<p>Above is the data set we are going to use. However, there are many variables we are not using, so we manipulate to our desired data set.</p>
+<pre class="r"><code>covid19_cases_packages &lt;- search_packages(&quot;COVID-19 Cases in Toronto&quot;)
+covid19_cases_resources &lt;- covid19_cases_packages %&gt;% list_package_resources() # Get the resources that I am interested in
+
+covid19_cases_statistics &lt;- covid19_cases_resources %&gt;% get_resource()
+covid19_cases_statistics # Store all the information into the variable and wait for later analysis
+## # A tibble: 16,942 x 18
+##     `_id` Assigned_ID `Outbreak Assoc… `Age Group` `Neighbourhood … FSA  
+##     &lt;int&gt;       &lt;int&gt; &lt;chr&gt;            &lt;chr&gt;       &lt;chr&gt;            &lt;chr&gt;
+##  1 126705           1 Sporadic         50 to 59 Y… Willowdale East  M2N  
+##  2 126706           2 Sporadic         50 to 59 Y… Willowdale East  M2N  
+##  3 126707           3 Sporadic         20 to 29 Y… Parkwoods-Donal… M3A  
+##  4 126708           4 Sporadic         60 to 69 Y… Church-Yonge Co… M4W  
+##  5 126709           5 Sporadic         60 to 69 Y… Church-Yonge Co… M4W  
+##  6 126710           6 Sporadic         50 to 59 Y… Newtonbrook West M2R  
+##  7 126711           7 Sporadic         80 to 89 Y… Milliken         M1V  
+##  8 126712           8 Sporadic         60 to 69 Y… Willowdale West  M2N  
+##  9 126713           9 Sporadic         50 to 59 Y… Willowdale East  M2N  
+## 10 126714          10 Sporadic         60 to 69 Y… Henry Farm       M2J  
+## # … with 16,932 more rows, and 12 more variables: `Source of Infection` &lt;chr&gt;,
+## #   Classification &lt;chr&gt;, `Episode Date` &lt;chr&gt;, `Reported Date` &lt;chr&gt;, `Client
+## #   Gender` &lt;chr&gt;, Outcome &lt;chr&gt;, `Currently Hospitalized` &lt;chr&gt;, `Currently in
+## #   ICU` &lt;chr&gt;, `Currently Intubated` &lt;chr&gt;, `Ever Hospitalized` &lt;chr&gt;, `Ever
+## #   in ICU` &lt;chr&gt;, `Ever Intubated` &lt;chr&gt;</code></pre>
+<p>To figure out the relationship between infection rate and age group, we set up data set “Age_set” first.</p>
+<pre class="r"><code>Age_set &lt;- covid19_cases_statistics %&gt;% group_by(`Age Group`) %&gt;% count()
+Age_set&lt;- Age_set %&gt;% mutate(percent = round(100*n/sum(Age_set$n), 1))
+Age_set
+## # A tibble: 10 x 3
+## # Groups:   Age Group [10]
+##    `Age Group`        n percent
+##    &lt;chr&gt;          &lt;int&gt;   &lt;dbl&gt;
+##  1 19 and younger  1200     7.1
+##  2 20 to 29 Years  2714    16  
+##  3 30 to 39 Years  2519    14.9
+##  4 40 to 49 Years  2325    13.7
+##  5 50 to 59 Years  2616    15.4
+##  6 60 to 69 Years  1767    10.4
+##  7 70 to 79 Years  1108     6.5
+##  8 80 to 89 Years  1550     9.1
+##  9 90 and older    1114     6.6
+## 10 NaN               29     0.2</code></pre>
+<div id="graphs-and-relevent-discussions" class="section level2">
+<h2>Graphs and relevent discussions</h2>
+<p>Figure <a href="#fig:pi">1</a> illustrates which age groups are more likely to get infected:</p>
+<pre class="r"><code># Plot the chart.
+pie(Age_set$n, labels = Age_set$percent, main = &quot;Infection rate and Age Group&quot;, col = c(&quot;#FF0000&quot;, &quot;#00FF00&quot;, &quot;#0000FF&quot;, &quot;#FFFF00&quot;, &quot;#00FFFF&quot;, &quot;#FF00FF&quot;, &quot;#C0C0C0&quot;, &quot;#800000&quot;, &quot;#008000&quot;, &quot;#800080&quot;))
+legend(&quot;topright&quot;, Age_set$`Age Group`, cex = 0.8, fill = c(&quot;#FF0000&quot;, &quot;#00FF00&quot;, &quot;#0000FF&quot;, &quot;#FFFF00&quot;, &quot;#00FFFF&quot;, &quot;#FF00FF&quot;, &quot;#C0C0C0&quot;, &quot;#800000&quot;, &quot;#008000&quot;, &quot;#800080&quot;))</code></pre>
+<div class="figure"><span id="fig:pi"></span>
+<img src="/post/COVIDstudy_files/figure-html/pi-1.png" alt="A pie chart of infection rate and age group." width="672" />
+<p class="caption">
+Figure 1: A pie chart of infection rate and age group.
+</p>
+</div>
+<p>According to the graph mentioned above, it is obvious that age groups ‘20 to 29 years’ and ‘50 and 59 years’ tend to test positive. And Generally,</p>
+<pre class="r"><code>Gender_set &lt;- covid19_cases_statistics %&gt;% group_by(`Client Gender`) %&gt;% count()
+Gender_set&lt;- Gender_set %&gt;% mutate(percent = round(100*n/sum(Gender_set$n), 1))
+Gender_set
+## # A tibble: 5 x 3
+## # Groups:   Client Gender [5]
+##   `Client Gender`     n percent
+##   &lt;chr&gt;           &lt;int&gt;   &lt;dbl&gt;
+## 1 FEMALE           8973    53  
+## 2 MALE             7717    45.5
+## 3 OTHER               6     0  
+## 4 TRANSGENDER         5     0  
+## 5 UNKNOWN           241     1.4</code></pre>
+<pre class="r"><code># Plot the chart.
+pie(Gender_set$n, labels = Gender_set$percent, main = &quot;Infection rate and Gender&quot;, col = c(&quot;#FF0000&quot;, &quot;#00FF00&quot;, &quot;#0000FF&quot;, &quot;#FFFF00&quot;, &quot;#00FFFF&quot;))
+legend(&quot;topright&quot;, Gender_set$`Client Gender`, cex = 0.8, fill = c(&quot;#FF0000&quot;, &quot;#00FF00&quot;, &quot;#0000FF&quot;, &quot;#FFFF00&quot;, &quot;#00FFFF&quot;))</code></pre>
+<p><img src="/post/COVIDstudy_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+</div>
+</div>
+<div id="reference" class="section level1 unnumbered">
+<h1>Reference</h1>
+<div id="refs" class="references">
+<div id="ref-citationcovid19cases">
+<p>“COVID19 Cases in Toronto.” 2020. <em>Toronto Open Data Portal</em>.</p>
+</div>
+<div id="ref-citationtidyverse">
+<p>Wickham, Hadley, Mara Averick, Jennifer Bryan, Winston Chang, Lucy D’Agostino McGowan, Romain François, Garrett Grolemund, et al. 2019. “Welcome to the tidyverse.” <em>Journal of Open Source Software</em> 4 (43): 1686. <a href="https://doi.org/10.21105/joss.01686">https://doi.org/10.21105/joss.01686</a>.</p>
+</div>
+</div>
+</div>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+

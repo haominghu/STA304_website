@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.75.1" />
+
+
+<title>Groups infected most by the COVID-19 - Haoming Hu&#39;s website</title>
+<meta property="og:title" content="Groups infected most by the COVID-19 - Haoming Hu&#39;s website">
+
+
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/logo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://github.com/rstudio/blogdown">GitHub</a></li>
+    
+    <li><a href="https://twitter.com/rstudio">Twitter</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">7 min read</span>
+    
+
+    <h1 class="article-title">Groups infected most by the COVID-19</h1>
+
+    
+    <span class="article-date">2020-09-23</span>
+    
+
+    <div class="article-content">
+      
+
+
+<div id="abstract" class="section level1">
+<h1>Abstract</h1>
+<p>This report collects information about COVID-19 cases in Toronto. It analyzes some groups that are likely to be infected by the virus, after which to raise their awareness and better prevent this virus’s spread. And we did find out that certain age groups and gender are more susceptible.</p>
+</div>
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>We use <span class="citation">Wickham et al. (2019)</span> and <span class="citation">(“COVID19 Cases in Toronto” 2020)</span> and <span class="citation">Wickham (2016)</span>.</p>
+<p>2020 is a catastrophic year for almost everybody due to the widespread of the novel virus. To better recover from this disaster, I believe the first step, which is also the most fundamental step, is to contain the spreading. And this is precisely the aim of this report. Raising people’s awareness and exposing them with scientific data. Specifically, we used data collected by ‘Toronto Public Health’ and found that men in their 20s and women in their 20s and 50s tend to be infected by the virus than other groups. Thus, if you unfortunately match the description of these people, please pay more attention to the virus and care more about yourself, for the sake of your own well-being and the development of this great society.</p>
+</div>
+<div id="data-discussion" class="section level1">
+<h1>Data discussion</h1>
+<p>The data set we used is called “COVID-19 Cases in Toronto”, and it is from the Toronto Open Data Portal. Considering the comprehensive information it contains about COVID-19 cases in Toronto, we decided to use it in our later analysis.</p>
+</div>
+<div id="data-of-covid-19-cases-in-canada" class="section level1">
+<h1>Data of covid-19 cases in Canada</h1>
+<pre><code>## # A tibble: 17,872 x 18
+##     `_id` Assigned_ID `Outbreak Assoc… `Age Group` `Neighbourhood … FSA  
+##     &lt;int&gt;       &lt;int&gt; &lt;chr&gt;            &lt;chr&gt;       &lt;chr&gt;            &lt;chr&gt;
+##  1 143647           1 Sporadic         50 to 59 Y… Willowdale East  M2N  
+##  2 143648           2 Sporadic         50 to 59 Y… Willowdale East  M2N  
+##  3 143649           3 Sporadic         20 to 29 Y… Parkwoods-Donal… M3A  
+##  4 143650           4 Sporadic         60 to 69 Y… Church-Yonge Co… M4W  
+##  5 143651           5 Sporadic         60 to 69 Y… Church-Yonge Co… M4W  
+##  6 143652           6 Sporadic         50 to 59 Y… Newtonbrook West M2R  
+##  7 143653           7 Sporadic         80 to 89 Y… Milliken         M1V  
+##  8 143654           8 Sporadic         60 to 69 Y… Willowdale West  M2N  
+##  9 143655           9 Sporadic         50 to 59 Y… Willowdale East  M2N  
+## 10 143656          10 Sporadic         60 to 69 Y… Henry Farm       M2J  
+## # … with 17,862 more rows, and 12 more variables: `Source of Infection` &lt;chr&gt;,
+## #   Classification &lt;chr&gt;, `Episode Date` &lt;chr&gt;, `Reported Date` &lt;chr&gt;, `Client
+## #   Gender` &lt;chr&gt;, Outcome &lt;chr&gt;, `Currently Hospitalized` &lt;chr&gt;, `Currently in
+## #   ICU` &lt;chr&gt;, `Currently Intubated` &lt;chr&gt;, `Ever Hospitalized` &lt;chr&gt;, `Ever
+## #   in ICU` &lt;chr&gt;, `Ever Intubated` &lt;chr&gt;</code></pre>
+<p>I created a variable “covid19_cases_statistics” to store all information on the data set I wanted, and this is the only original data set we need for later data manipulation. Because it contains much more data than I need, I have to filter the required information, for example, ‘Age group’ and ‘gender’.</p>
+<pre><code>## # A tibble: 10 x 3
+## # Groups:   Age Group [10]
+##    `Age Group`        n percent
+##    &lt;chr&gt;          &lt;int&gt;   &lt;dbl&gt;
+##  1 19 and younger  1311     7.3
+##  2 20 to 29 Years  3049    17.1
+##  3 30 to 39 Years  2724    15.2
+##  4 40 to 49 Years  2416    13.5
+##  5 50 to 59 Years  2720    15.2
+##  6 60 to 69 Years  1813    10.1
+##  7 70 to 79 Years  1133     6.3
+##  8 80 to 89 Years  1557     8.7
+##  9 90 and older    1116     6.2
+## 10 NaN               33     0.2
+## # A tibble: 5 x 3
+## # Groups:   Client Gender [5]
+##   `Client Gender`     n percent
+##   &lt;chr&gt;           &lt;int&gt;   &lt;dbl&gt;
+## 1 FEMALE           9427    52.7
+## 2 MALE             8184    45.8
+## 3 OTHER               6     0  
+## 4 TRANSGENDER         5     0  
+## 5 UNKNOWN           250     1.4</code></pre>
+<p>I divided the original data set into two data sets, and each contains ‘Age Group’ or ‘Gender’ information to analyze their effect on the COVID19 Infection Rate respectively. And these are the two data sets we care for now.</p>
+<div id="graphs-and-relevent-discussions" class="section level2">
+<h2>Graphs and relevent discussions</h2>
+Figure <a href="#fig:fir">1</a> illustrates which Age Groups are more likely to be infected:
+<div class="figure"><span id="fig:fir"></span>
+<img src="/post/COVIDstudy_files/figure-html/fir-1.png" alt="A pie chart of Infection Rate and Age Group." width="672" />
+<p class="caption">
+Figure 1: A pie chart of Infection Rate and Age Group.
+</p>
+</div>
+<p>According to the graph mentioned above, it shows obviously that people in their 20s and 50s are more susceptible to COVID19 than other Age Groups. So no matter the genders, people in these two age groups should care more about themself to prevent the virus.</p>
+Figure <a href="#fig:sec">2</a> illustrates which Gender is more likely to get infected:
+<div class="figure"><span id="fig:sec"></span>
+<img src="/post/COVIDstudy_files/figure-html/sec-1.png" alt="A pie chart of Infection Rate and Gender." width="672" />
+<p class="caption">
+Figure 2: A pie chart of Infection Rate and Gender.
+</p>
+</div>
+<p>Similarly, the above graph indicates that among all the patients, more than half of them are female. So the Female group should pay more attention to this novel virus.</p>
+</div>
+<div id="more-specific-data" class="section level2">
+<h2>More specific data</h2>
+<p>For all the work I have done, I only analyzed the effect of either ‘Age Group’ or ‘Gender’ on COVID19, and I do not think this is enough. That is why I created another two data sets and two graphs here – to figure out which particular ‘Gender’ in which particular ‘Age Group’ is more susceptible to the virus, after which we can inform them to be more careful.</p>
+<pre><code>## # A tibble: 10 x 2
+## # Groups:   Age Group [10]
+##    `Age Group`        n
+##    &lt;chr&gt;          &lt;int&gt;
+##  1 19 and younger   658
+##  2 20 to 29 Years  1540
+##  3 30 to 39 Years  1369
+##  4 40 to 49 Years  1095
+##  5 50 to 59 Years  1221
+##  6 60 to 69 Years   912
+##  7 70 to 79 Years   561
+##  8 80 to 89 Years   539
+##  9 90 and older     267
+## 10 NaN               22</code></pre>
+<div class="figure"><span id="fig:thir"></span>
+<img src="/post/COVIDstudy_files/figure-html/thir-1.png" alt="A bar chart of Infection Rate and Male." width="672" />
+<p class="caption">
+Figure 3: A bar chart of Infection Rate and Male.
+</p>
+</div>
+<pre><code>## # A tibble: 10 x 2
+## # Groups:   Age Group [10]
+##    `Age Group`        n
+##    &lt;chr&gt;          &lt;int&gt;
+##  1 19 and younger   621
+##  2 20 to 29 Years  1486
+##  3 30 to 39 Years  1328
+##  4 40 to 49 Years  1290
+##  5 50 to 59 Years  1483
+##  6 60 to 69 Years   883
+##  7 70 to 79 Years   554
+##  8 80 to 89 Years   967
+##  9 90 and older     805
+## 10 NaN               10</code></pre>
+<div class="figure"><span id="fig:forth"></span>
+<img src="/post/COVIDstudy_files/figure-html/forth-1.png" alt="A bar chart of Infection Rate and Female." width="672" />
+<p class="caption">
+Figure 4: A bar chart of Infection Rate and Female.
+</p>
+</div>
+<p>Given figure 3 and figure 4 above, we can tell that men in their 20s have tendency to be infected and this tendency decreases as age increases. However, in terms of women, those in their 20s and 50s are more likely to be infected. Thus these two groups definitely should take care of themselves.</p>
+</div>
+<div id="shortcomings" class="section level2">
+<h2>Shortcomings</h2>
+<p>There are many reasons why a group of people are more likely to get infected by the virus, for example, because they live near hospitals or because they frequent places like clubs or bars where are always full of people, or they have poor immunity systems. What I really want to emphasize here is it is not enough to simply consider variables like gender or age group to prevent the virus’s spread. There are many other factors, and we need more data to analyze. So from this perspective, the only data set we used for this report is far from enough.</p>
+</div>
+</div>
+<div id="reproducibility" class="section level1">
+<h1>Reproducibility</h1>
+<ol style="list-style-type: decimal">
+<li>You need to run ‘install.packages(“opendatatoronto”)’ first to run this file.</li>
+<li>Codes for data sets and graphs are not included, but you can find all the codes in my Github: <a href="https://github.com/haominghu/STA304_website/tree/master/content/post">Haoming Hu’s Github</a></li>
+</ol>
+</div>
+<div id="reference" class="section level1 unnumbered">
+<h1>Reference</h1>
+<div id="refs" class="references">
+<div id="ref-citationcovid19cases">
+<p>“COVID19 Cases in Toronto.” 2020. <em>Toronto Open Data Portal</em>. <a href="https://open.toronto.ca/dataset/covid-19-cases-in-toronto/">https://open.toronto.ca/dataset/covid-19-cases-in-toronto/</a>.</p>
+</div>
+<div id="ref-ggplotref">
+<p>Wickham, Hadley. 2016. <em>Ggplot2: Elegant Graphics for Data Analysis</em>. Springer-Verlag New York. <a href="https://ggplot2.tidyverse.org">https://ggplot2.tidyverse.org</a>.</p>
+</div>
+<div id="ref-citationtidyverse">
+<p>Wickham, Hadley, Mara Averick, Jennifer Bryan, Winston Chang, Lucy D’Agostino McGowan, Romain François, Garrett Grolemund, et al. 2019. “Welcome to the tidyverse.” <em>Journal of Open Source Software</em> 4 (43): 1686. <a href="https://doi.org/10.21105/joss.01686">https://doi.org/10.21105/joss.01686</a>.</p>
+</div>
+</div>
+</div>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+
+    
+  </body>
+</html>
+

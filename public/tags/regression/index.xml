@@ -6,18 +6,27 @@
     <description>Recent content in regression on Haoming Hu&#39;s website</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 23 Jul 2015 21:13:14 -0500</lastBuildDate><atom:link href="/tags/regression/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 23 Sep 2020 00:00:00 +0000</lastBuildDate><atom:link href="/tags/regression/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Groups infected most by the COVID-19</title>
+      <link>/2020/09/23/groups-infected-most-by-the-covid-19/</link>
+      <pubDate>Wed, 23 Sep 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/09/23/groups-infected-most-by-the-covid-19/</guid>
+      <description>Abstract This report collects information about COVID-19 cases in Toronto. It analyzes some groups that are likely to be infected by the virus, after which to raise their awareness and better prevent this virus’s spread. And we did find out that certain age groups and gender are more susceptible.
+ Introduction We use Wickham et al. (2019) and (“COVID19 Cases in Toronto” 2020) and Wickham (2016).
+2020 is a catastrophic year for almost everybody due to the widespread of the novel virus.</description>
+    </item>
+    
     <item>
       <title>Introduction</title>
-      <link>/2015/07/23/introduction/</link>
-      <pubDate>Thu, 23 Jul 2015 21:13:14 -0500</pubDate>
+      <link>/2020/09/22/introduction/</link>
+      <pubDate>Tue, 22 Sep 2020 00:00:00 +0000</pubDate>
       
-      <guid>/2015/07/23/introduction/</guid>
+      <guid>/2020/09/22/introduction/</guid>
       <description>abstract My abstract.
  Introduction We use Wickham et al. (2019).
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see http://rmarkdown.rstudio.com.
-You can embed an R code chunk like this:
-summary(cars) ## speed dist ## Min. : 4.0 Min. : 2.00 ## 1st Qu.:12.0 1st Qu.: 26.00 ## Median :15.0 Median : 36.</description>
+2020 is a hard year for everybody due to the widespread of the novel virus. In order to raise awareness of the general public, it is a good way to expose them with the propriate data, which indicates some virus-related factors. Specifically, we want to know if variables like gender, age group and so on would affect the possibility of contracting the virus.</description>
     </item>
     
   </channel>

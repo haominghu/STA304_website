@@ -1,0 +1,113 @@
+---
+title: "Groups infected most by the COVID-19"
+author: "Haoming Hu"
+date: 2020-09-23
+bibliography: [references.bib, covid19refe.bib, ggref.bib]
+categories: ["R"]
+tags: ["R Markdown", "plot", "regression"]
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE)
+```
+
+# Abstract
+
+This report collects information about COVID-19 cases in Toronto. It analyzes some groups that are likely to be infected by the virus, after which to raise their awareness and better prevent this virus's spread. And we did find out that certain age groups and gender are more susceptible.
+ 
+
+# Introduction 
+
+We use @citationtidyverse and @citationcovid19cases and @ggplotref.
+
+2020 is a catastrophic year for almost everybody due to the widespread of the novel virus. To better recover from this disaster, I believe the first step, which is also the most fundamental step, is to contain the spreading. And this is precisely the aim of this report. Raising people's awareness and exposing them with scientific data. Specifically, we used data collected by 'Toronto Public Health' and found that men in their 20s and women in their 20s and 50s tend to be infected by the virus than other groups. Thus, if you unfortunately match the description of these people, please pay more attention to the virus and care more about yourself, for the sake of your own well-being and the development of this great society. 
+
+
+# Data discussion
+
+The data set we used is called "COVID-19 Cases in Toronto", and it is from the Toronto Open Data Portal. Considering the comprehensive information it contains about COVID-19 cases in Toronto, we decided to use it in our later analysis.
+
+
+# Data of covid-19 cases in Canada
+
+```{r, echo=FALSE,message=FALSE, include=FALSE}
+library(opendatatoronto)
+library(tidyverse)
+library(ggplot2)
+packages <- list_packages(limit = 10) # 'packages' used to store all the packages from the original data resources for later manipulation. 
+```
+
+
+```{r, echo=FALSE,message=FALSE}
+covid19_cases_packages <- search_packages("COVID-19 Cases in Toronto")
+covid19_cases_resources <- covid19_cases_packages %>% list_package_resources() # Get the resources that I am interested in
+
+covid19_cases_statistics <- covid19_cases_resources %>% get_resource()
+covid19_cases_statistics # Store all the information into the variable and wait for later analysis
+```
+
+I created a variable "covid19_cases_statistics" to store all information on the data set I wanted, and this is the only original data set we need for later data manipulation. Because it contains much more data than I need, I have to filter the required information, for example, 'Age group' and 'gender'.  
+
+
+```{r, echo=FALSE,message=FALSE}
+Age_set <- covid19_cases_statistics %>% group_by(`Age Group`) %>% count()
+Age_set<- Age_set %>% mutate(percent = round(100*n/sum(Age_set$n), 1))
+Age_set
+
+Gender_set <- covid19_cases_statistics %>% group_by(`Client Gender`) %>% count()
+Gender_set<- Gender_set %>% mutate(percent = round(100*n/sum(Gender_set$n), 1))
+Gender_set
+```
+
+I divided the original data set into two data sets, and each contains 'Age Group' or 'Gender' information to analyze their effect on the COVID19 Infection Rate respectively. And these are the two data sets we care for now.
+
+
+## Graphs and relevent discussions 
+
+Figure \@ref(fig:fir) illustrates which Age Groups are more likely to be infected:
+```{r fir, fig.cap='A pie chart of Infection Rate and Age Group.', echo=FALSE,message=FALSE}
+pie(Age_set$n, labels = Age_set$percent, main = "Infection rate and Age Group", col = c("#FF0000", "#00FF00", "#0000FF", "#FFFF00", "#00FFFF", "#FF00FF", "#C0C0C0", "#800000", "#008000", "#800080"))
+legend("topright", Age_set$`Age Group`, cex = 0.8, fill = c("#FF0000", "#00FF00", "#0000FF", "#FFFF00", "#00FFFF", "#FF00FF", "#C0C0C0", "#800000", "#008000", "#800080")) # use legend to show the topright bar chart bellow
+```
+According to the graph mentioned above, it shows obviously that people in their 20s and 50s are more susceptible to COVID19 than other Age Groups. So no matter the genders, people in these two age groups should care more about themself to prevent the virus.
+
+Figure \@ref(fig:sec) illustrates which Gender is more likely to get infected:
+```{r sec, fig.cap='A pie chart of Infection Rate and Gender.', echo=FALSE,message=FALSE}
+pie(Gender_set$n, labels = Gender_set$percent, main = "Infection rate and Gender", col = c("#FF0000", "#00FF00", "#0000FF", "#FFFF00", "#00FFFF"))
+legend("topright", Gender_set$`Client Gender`, cex = 0.8, fill = c("#FF0000", "#00FF00", "#0000FF", "#FFFF00", "#00FFFF"))
+```
+Similarly, the above graph indicates that among all the patients, more than half of them are female. So the Female group should pay more attention to this novel virus.
+
+## More specific data
+
+For all the work I have done, I only analyzed the effect of either 'Age Group' or 'Gender' on COVID19, and I do not think this is enough. That is why I created another two data sets and two graphs here -- to figure out which particular 'Gender' in which particular 'Age Group' is more susceptible to the virus, after which we can inform them to be more careful.
+
+```{r thir, fig.cap='A bar chart of Infection Rate and Male.', echo=FALSE,message=FALSE}
+male_age_set <- covid19_cases_statistics %>% select(`Age Group`, `Client Gender`) %>% filter(`Client Gender` == 'MALE')%>% group_by(`Age Group`) %>% count()
+male_age_set
+
+ggplot(data = male_age_set, aes(x = `Age Group`, y = n)) +
+  geom_bar(stat = "identity", fill = "steelblue") + ggtitle("Male and Infection rate")
+```
+
+```{r forth, fig.cap='A bar chart of Infection Rate and Female.', echo=FALSE,message=FALSE}
+female_age_set <- covid19_cases_statistics %>% select(`Age Group`, `Client Gender`) %>% filter(`Client Gender` == 'FEMALE')%>% group_by(`Age Group`) %>% count()
+female_age_set
+
+ggplot(data = female_age_set, aes(x = `Age Group`, y = n)) +
+  geom_bar(stat = "identity", fill = "steelblue") + ggtitle("Female and Infection rate")
+```
+Given figure 3 and figure 4 above, we can tell that men in their 20s have tendency to be infected and this tendency decreases as age increases. However, in terms of women, those in their 20s and 50s are more likely to be infected. Thus these two groups definitely should take care of themselves.
+
+## Shortcomings
+
+There are many reasons why a group of people are more likely to get infected by the virus, for example, because they live near hospitals or because they frequent places like clubs or bars where are always full of people, or they have poor immunity systems. What I really want to emphasize here is it is not enough to simply consider variables like gender or age group to prevent the virus's spread. There are many other factors, and we need more data to analyze. So from this perspective, the only data set we used for this report is far from enough.
+
+
+# Reproducibility
+1. You need to run 'install.packages("opendatatoronto")' first to run this file.
+2. Codes for data sets and graphs are not included, but you can find all the codes in my Github: [Haoming Hu's Github](https://github.com/haominghu/STA304_website/tree/master/content/post)
+
+
+# Reference

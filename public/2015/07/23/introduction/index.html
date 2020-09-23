@@ -62,7 +62,7 @@
 
   <article class="article">
     
-    <span class="article-duration">1 min read</span>
+    <span class="article-duration">5 min read</span>
     
 
     <h1 class="article-title">Introduction</h1>
@@ -119,6 +119,112 @@ Figure 1: A fancy pie chart.
 </p>
 </div>
 </div>
+<div id="data-of-covid-19-cases-in-canada" class="section level1">
+<h1>Data of covid-19 cases in Canada</h1>
+<pre class="r"><code>#install.packages(&quot;opendatatoronto&quot;)
+library(opendatatoronto)
+library(tidyverse)
+## Warning: package &#39;tidyverse&#39; was built under R version 3.5.2
+## ── Attaching packages ─────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+## ✓ ggplot2 3.3.2     ✓ purrr   0.3.4
+## ✓ tibble  3.0.3     ✓ dplyr   1.0.2
+## ✓ tidyr   1.1.2     ✓ stringr 1.4.0
+## ✓ readr   1.3.1     ✓ forcats 0.5.0
+## Warning: package &#39;stringr&#39; was built under R version 3.5.2
+## Warning: package &#39;forcats&#39; was built under R version 3.5.2
+## ── Conflicts ────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()
+library(ggplot2)
+packages &lt;- list_packages(limit = 10)
+packages # To see the basic structure of our package
+## # A tibble: 10 x 10
+##    title id    topics civic_issues excerpt dataset_category num_resources
+##    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;        &lt;chr&gt;   &lt;chr&gt;                    &lt;int&gt;
+##  1 Cata… 473d… City … &lt;NA&gt;         Histor… Table                        2
+##  2 Lobb… 6a87… City … &lt;NA&gt;         The Lo… Document                     2
+##  3 Buil… 8219… Devel… &lt;NA&gt;         Provid… Document                     3
+##  4 Buil… 108c… Devel… Affordable … Provid… Document                     3
+##  5 Dail… 8a6e… City … Affordable … Daily … Table                        8
+##  6 Stre… 1db3… City … Mobility     Transi… Map                          1
+##  7 Stre… 74f6… City … &lt;NA&gt;         Public… Map                          1
+##  8 Stre… 821f… City … &lt;NA&gt;         Public… Map                          1
+##  9 Stre… ccfd… City … &lt;NA&gt;         Poster… Map                          1
+## 10 Stre… cf70… City … &lt;NA&gt;         Poster… Map                          1
+## # … with 3 more variables: formats &lt;chr&gt;, refresh_rate &lt;chr&gt;,
+## #   last_refreshed &lt;date&gt;</code></pre>
+<pre class="r"><code>covid19_cases_packages &lt;- search_packages(&quot;COVID-19 Cases in Toronto&quot;)
+covid19_cases_resources &lt;- covid19_cases_packages %&gt;% list_package_resources()
+covid19_cases_resources # Get the resources that I am interested in
+## # A tibble: 1 x 4
+##   name          id                                   format last_modified
+##   &lt;chr&gt;         &lt;chr&gt;                                &lt;chr&gt;  &lt;date&gt;       
+## 1 COVID19 cases e5bf35bc-e681-43da-b2ce-0242d00922ad CSV    2020-09-16
+
+covid19_cases_statistics &lt;- covid19_cases_resources %&gt;% get_resource()
+covid19_cases_statistics # Store all the information into the variable and wait for later analysis
+## # A tibble: 16,942 x 18
+##     `_id` Assigned_ID `Outbreak Assoc… `Age Group` `Neighbourhood … FSA  
+##     &lt;int&gt;       &lt;int&gt; &lt;chr&gt;            &lt;chr&gt;       &lt;chr&gt;            &lt;chr&gt;
+##  1 126705           1 Sporadic         50 to 59 Y… Willowdale East  M2N  
+##  2 126706           2 Sporadic         50 to 59 Y… Willowdale East  M2N  
+##  3 126707           3 Sporadic         20 to 29 Y… Parkwoods-Donal… M3A  
+##  4 126708           4 Sporadic         60 to 69 Y… Church-Yonge Co… M4W  
+##  5 126709           5 Sporadic         60 to 69 Y… Church-Yonge Co… M4W  
+##  6 126710           6 Sporadic         50 to 59 Y… Newtonbrook West M2R  
+##  7 126711           7 Sporadic         80 to 89 Y… Milliken         M1V  
+##  8 126712           8 Sporadic         60 to 69 Y… Willowdale West  M2N  
+##  9 126713           9 Sporadic         50 to 59 Y… Willowdale East  M2N  
+## 10 126714          10 Sporadic         60 to 69 Y… Henry Farm       M2J  
+## # … with 16,932 more rows, and 12 more variables: `Source of Infection` &lt;chr&gt;,
+## #   Classification &lt;chr&gt;, `Episode Date` &lt;chr&gt;, `Reported Date` &lt;chr&gt;, `Client
+## #   Gender` &lt;chr&gt;, Outcome &lt;chr&gt;, `Currently Hospitalized` &lt;chr&gt;, `Currently in
+## #   ICU` &lt;chr&gt;, `Currently Intubated` &lt;chr&gt;, `Ever Hospitalized` &lt;chr&gt;, `Ever
+## #   in ICU` &lt;chr&gt;, `Ever Intubated` &lt;chr&gt;</code></pre>
+<pre class="r"><code>Age_set &lt;- covid19_cases_statistics %&gt;% group_by(`Age Group`) %&gt;% count()
+Age_set&lt;- Age_set %&gt;% mutate(percent = round(100*n/sum(Age_set$n), 1))
+Age_set
+## # A tibble: 10 x 3
+## # Groups:   Age Group [10]
+##    `Age Group`        n percent
+##    &lt;chr&gt;          &lt;int&gt;   &lt;dbl&gt;
+##  1 19 and younger  1200     7.1
+##  2 20 to 29 Years  2714    16  
+##  3 30 to 39 Years  2519    14.9
+##  4 40 to 49 Years  2325    13.7
+##  5 50 to 59 Years  2616    15.4
+##  6 60 to 69 Years  1767    10.4
+##  7 70 to 79 Years  1108     6.5
+##  8 80 to 89 Years  1550     9.1
+##  9 90 and older    1114     6.6
+## 10 NaN               29     0.2</code></pre>
+<p>See Figure <a href="#fig:pi">2</a> for example:</p>
+<pre class="r"><code># Plot the chart.
+pie(Age_set$n, labels = Age_set$percent, main = &quot;Infection rate and Age Group&quot;, col = c(&quot;#FF0000&quot;, &quot;#00FF00&quot;, &quot;#0000FF&quot;, &quot;#FFFF00&quot;, &quot;#00FFFF&quot;, &quot;#FF00FF&quot;, &quot;#C0C0C0&quot;, &quot;#800000&quot;, &quot;#008000&quot;, &quot;#800080&quot;))
+legend(&quot;topright&quot;, Age_set$`Age Group`, cex = 0.8, fill = c(&quot;#FF0000&quot;, &quot;#00FF00&quot;, &quot;#0000FF&quot;, &quot;#FFFF00&quot;, &quot;#00FFFF&quot;, &quot;#FF00FF&quot;, &quot;#C0C0C0&quot;, &quot;#800000&quot;, &quot;#008000&quot;, &quot;#800080&quot;))</code></pre>
+<div class="figure"><span id="fig:pi"></span>
+<img src="/post/2015-07-23-r-rmarkdown_files/figure-html/pi-1.png" alt="A pie chart of infection rate and age group." width="672" />
+<p class="caption">
+Figure 2: A pie chart of infection rate and age group.
+</p>
+</div>
+<pre class="r"><code>Gender_set &lt;- covid19_cases_statistics %&gt;% group_by(`Client Gender`) %&gt;% count()
+Gender_set&lt;- Gender_set %&gt;% mutate(percent = round(100*n/sum(Gender_set$n), 1))
+Gender_set
+## # A tibble: 5 x 3
+## # Groups:   Client Gender [5]
+##   `Client Gender`     n percent
+##   &lt;chr&gt;           &lt;int&gt;   &lt;dbl&gt;
+## 1 FEMALE           8973    53  
+## 2 MALE             7717    45.5
+## 3 OTHER               6     0  
+## 4 TRANSGENDER         5     0  
+## 5 UNKNOWN           241     1.4</code></pre>
+<pre class="r"><code># Plot the chart.
+pie(Gender_set$n, labels = Gender_set$percent, main = &quot;Infection rate and Gender&quot;, col = c(&quot;#FF0000&quot;, &quot;#00FF00&quot;, &quot;#0000FF&quot;, &quot;#FFFF00&quot;, &quot;#00FFFF&quot;))
+legend(&quot;topright&quot;, Gender_set$`Client Gender`, cex = 0.8, fill = c(&quot;#FF0000&quot;, &quot;#00FF00&quot;, &quot;#0000FF&quot;, &quot;#FFFF00&quot;, &quot;#00FFFF&quot;))</code></pre>
+<p><img src="/post/2015-07-23-r-rmarkdown_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+</div>
 <div id="reference" class="section level1 unnumbered">
 <h1>Reference</h1>
 <div id="refs" class="references">
@@ -163,6 +269,9 @@ Figure 1: A fancy pie chart.
 
 
     
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
 
     
   </body>
